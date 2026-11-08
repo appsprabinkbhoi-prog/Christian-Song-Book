@@ -1,0 +1,15 @@
+{
+  "name": "ଓଡ଼ିଆ ଖ୍ରୀଷ୍ଟିୟାନ ସଙ୍ଗୀତ",
+  "short_name": "Song Book",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a56db",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3845/3845868.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

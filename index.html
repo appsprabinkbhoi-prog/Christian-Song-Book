@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="or">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ଓଡ଼ିଆ ଖ୍ରୀଷ୍ଟିୟାନ ସଙ୍ଗୀତ</title>
+  <style>
+    :root {
+      --bg-color: #f1f3f5;
+      --card-bg: #ffffff;
+      --text-color: #212529;
+      --border-color: #ced4da;
+      --item-border: #e9ecef;
+      --primary: #1a56db;
+      --chip-bg: #f8f9fa;
+      --lyrics-color: #1a1a1a;
+      --snippet-bg: #fdf2e9;
+      --highlight-color: #e67700;
+    }
+
+    body.dark-theme {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --text-color: #e0e0e0;
+      --border-color: #424242;
+      --item-border: #2d2d2d;
+      --primary: #4dabf7;
+      --chip-bg: #2a2a2a;
+      --lyrics-color: #f1f1f1;
+      --snippet-bg: #2b221b;
+      --highlight-color: #ffa94d;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 12px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.2s, color 0.2s;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      min-height: 85vh;
+      position: relative;
+    }
+
+    body.is-fullscreen {
+      padding: 0;
+      background-color: var(--card-bg);
+    }
+    body.is-fullscreen .container {
+      max-width: 100%;
+      border-radius: 0;
+      box-shadow: none;
+      min-height: 100vh;
+      padding: 20px 16px;
+    }
+    body.is-fullscreen .reader-header,
+    body.is-fullscreen .yt-play-bar {
+      display: none !important;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    h1 {
+      color: var(--primary);
+      font-size: 1.35rem;
+      margin: 0;
+    }
+    .theme-btn {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 6px 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .top-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    #search-box {
+      flex: 1;
+      padding: 10px 12px;
+      font-size: 1rem;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-color);
+      border-radius: 8px;
+      outline: none;
+    }
+    .btn-green {
+      background-color: #2b8a3e;
+      color: white;
+      border: none;
+      padding: 0 12px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* Search Filter Mode Toggle Options */
+    .search-filter-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-size: 0.88rem;
+    }
+    .search-filter-row span {
+      color: var(--text-color);
+      opacity: 0.8;
+      font-weight: bold;
+    }
+    .filter-btn-toggle {
+      border: 1px solid var(--border-color);
+      background: var(--chip-bg);
+      color: var(--text-color);
+      padding: 4px 10px;
+      border-radius: 16px;
+      cursor: pointer;
+      font-size: 0.84rem;
+      font-weight: bold;
+    }
+    .filter-btn-toggle.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .backup-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .btn-tool {
+      flex: 1;
+      background: var(--chip-bg);
+      color: var(--primary);
+      border: 1px solid var(--border-color);
+      padding: 8px 6px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+    }
+    .playlist-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+      scrollbar-width: thin;
+    }
+    .playlist-chip {
+      white-space: nowrap;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      background: var(--chip-bg);
+      color: var(--text-color);
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .playlist-chip.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Song items & Keyword matched snippets */
+    .song-item {
+      padding: 12px;
+      border-bottom: 1px solid var(--item-border);
+      cursor: pointer;
+    }
+    .song-main-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .song-info {
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+    .song-number {
+      font-weight: bold;
+      color: var(--primary);
+      min-width: 44px;
+      font-size: 1.05rem;
+    }
+    .song-title-text {
+      font-size: 1.05rem;
+    }
+    .yt-badge {
+      color: #e03131;
+      font-size: 1.1rem;
+      margin-left: 6px;
+    }
+    .keyword-snippet {
+      margin-top: 6px;
+      padding: 6px 10px;
+      border-radius: 6px;
+      background: var(--snippet-bg);
+      font-size: 0.88rem;
+      color: var(--text-color);
+      line-height: 1.4;
+      border-left: 3px solid var(--highlight-color);
+    }
+    .keyword-highlight {
+      font-weight: bold;
+      color: var(--highlight-color);
+      text-decoration: underline;
+    }
+
+    /* Reader view top controls */
+    .reader-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--item-border);
+      padding-bottom: 10px;
+    }
+    .nav-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.92rem;
+    }
+    .action-controls button {
+      background: var(--chip-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 6px 7px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-left: 2px;
+      cursor: pointer;
+    }
+    .btn-alpha-pop {
+      background: #e7f5ff !important;
+      color: #1a56db !important;
+      border-color: #a5d8ff !important;
+    }
+    .fav-playlist-btn {
+      color: #d6336c !important;
+    }
+    .scroll-btn.scrolling {
+      background: #2b8a3e !important;
+      color: white !important;
+    }
+    .btn-share {
+      color: #25d366 !important;
+    }
+    .btn-fullscreen {
+      color: #1a56db !important;
+    }
+    .btn-edit {
+      color: #f59f00 !important;
+    }
+    .btn-delete {
+      color: #c92a2a !important;
+    }
+    .yt-play-bar {
+      margin-bottom: 14px;
+      display: none;
+    }
+    .yt-play-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ff0000;
+      color: white;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+    .lyrics-content {
+      white-space: pre-line;
+      line-height: 1.9;
+      color: var(--lyrics-color);
+      transition: font-size 0.15s ease;
+      padding-bottom: 140px;
+      min-height: 50vh;
+      cursor: pointer;
+    }
+
+    /* Modal Sheet Styles */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-content {
+      background: var(--card-bg);
+      color: var(--text-color);
+      width: 100%;
+      max-width: 500px;
+      border-radius: 16px 16px 0 0;
+      padding: 18px;
+      box-sizing: border-box;
+      max-height: 82vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.3);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--item-border);
+      padding-bottom: 8px;
+    }
+    .modal-header h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      color: var(--primary);
+    }
+    .close-modal-btn {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--text-color);
+    }
+
+    /* Alphabet Popup Grid */
+    .alpha-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin-bottom: 14px;
+      max-height: 200px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .alpha-grid-btn {
+      height: 38px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--chip-bg);
+      color: var(--text-color);
+      font-size: 1.05rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .alpha-grid-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    .alpha-results-box {
+      border-top: 1px solid var(--item-border);
+      padding-top: 10px;
+      overflow-y: auto;
+      max-height: 220px;
+    }
+    .alpha-song-pick {
+      padding: 10px;
+      border-bottom: 1px solid var(--item-border);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .alpha-song-pick:active {
+      background: rgba(26, 86, 219, 0.1);
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-color);
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    .save-btn {
+      width: 100%;
+      background: #2b8a3e;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .info-box {
+      background: var(--chip-bg);
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .playlist-checkbox-list {
+      overflow-y: auto;
+      max-height: 250px;
+      margin-bottom: 14px;
+    }
+    .playlist-option {
+      display: flex;
+      align-items: center;
+      padding: 10px 4px;
+      border-bottom: 1px solid var(--item-border);
+      font-size: 1.05rem;
+      cursor: pointer;
+    }
+    .playlist-option input {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      cursor: pointer;
+    }
+    .new-playlist-box {
+      display: flex;
+      gap: 8px;
+      border-top: 1px solid var(--item-border);
+      padding-top: 12px;
+    }
+    .new-playlist-box input {
+      flex: 1;
+      padding: 8px 10px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-color);
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+    .new-playlist-box button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .screen {
+      display: none;
+    }
+    .active-screen {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- 1. Song List View -->
+    <div id="list-view" class="screen active-screen">
+      <div class="header-row">
+        <h1>ଓଡ଼ିଆ ଖ୍ରୀଷ୍ଟିୟାନ ସଙ୍ଗୀତ</h1>
+        <button class="theme-btn" id="theme-btn" onclick="toggleDarkMode()">🌙 ରାତ୍ରି</button>
+      </div>
+      
+      <div class="top-bar">
+        <input type="text" id="search-box" placeholder="ଗୀତ ନମ୍ବର କିମ୍ବା ନାମ ଖୋଜନ୍ତୁ...">
+        <button class="btn-green" onclick="openAddForm()">+ ଗୋଟିଏ</button>
+      </div>
+
+      <!-- Search Filter Mode Buttons -->
+      <div class="search-filter-row">
+        <span>ଖୋଜିବା ମୋଡ୍:</span>
+        <button id="mode-title-btn" class="filter-btn-toggle active" onclick="setSearchMode('title')">ଶୀର୍ଷକ (Title & No.)</button>
+        <button id="mode-lyrics-btn" class="filter-btn-toggle" onclick="setSearchMode('lyrics')">ପଦ / ଶବ୍ଦ (Lyrics Keywords)</button>
+      </div>
+
+      <div class="backup-bar">
+        <button class="btn-tool" onclick="openAlphabetPopup()">🔤 ଅ-ହ ତାଲିକା</button>
+        <button class="btn-tool" onclick="showScreen('bulk-view')">📥 Bulk</button>
+        <button class="btn-tool" onclick="exportData()">💾 ବ୍ୟାକ୍-ଅପ୍</button>
+        <button class="btn-tool" onclick="document.getElementById('import-file').click()">📂 ରିଷ୍ଟୋର୍</button>
+        <input type="file" id="import-file" style="display:none;" accept=".json" onchange="importData(event)">
+      </div>
+
+      <div class="playlist-scroll" id="playlist-bar"></div>
+
+      <div id="song-list"></div>
+    </div>
+
+    <!-- 2. Lyrics Reader View -->
+    <div id="lyrics-view" class="screen">
+      <div class="reader-header">
+        <button class="nav-btn" onclick="exitLyricsView()">← ତାଲିକା</button>
+        <div class="action-controls">
+          <button class="btn-alpha-pop" onclick="openAlphabetPopup()" title="Alphabet Picker">ଅ-ହ</button>
+          <button class="btn-share" onclick="shareCurrentSong()" title="Share Song">📤</button>
+          <button class="btn-fullscreen" onclick="toggleFullScreenMode()" title="Full Screen">⛶</button>
+          <button id="autoscroll-btn" class="scroll-btn" onclick="toggleAutoScroll()">▶ ସ୍କ୍ରୋଲ୍</button>
+          <button class="fav-playlist-btn" onclick="openPlaylistModal()">❤️ ତାଲିକା</button>
+          <button onclick="changeFontSize(-2)">A-</button>
+          <button onclick="changeFontSize(2)">A+</button>
+          <button class="btn-edit" onclick="openEditForm()">✏️</button>
+          <button class="btn-delete" onclick="handleDeleteSong()">🗑️</button>
+        </div>
+      </div>
+
+      <h2 id="song-title" style="margin-top: 0; color: var(--primary); margin-bottom: 8px;"></h2>
+
+      <div class="yt-play-bar" id="yt-bar">
+        <a id="yt-link" class="yt-play-btn" href="#" target="_blank" rel="noopener">
+          ▶ YouTube ରେ ଶୁଣନ୍ତୁ
+        </a>
+      </div>
+
+      <div class="lyrics-content" id="song-lyrics"></div>
+    </div>
+
+    <!-- 3. Add / Edit Single Song View -->
+    <div id="form-view" class="screen">
+      <div class="reader-header">
+        <button class="nav-btn" onclick="cancelFormView()">← ବାତିଲ</button>
+      </div>
+      <h2 id="form-heading" style="margin-top:0; color: var(--primary);">ନୂଆ ଗୀତ ଯୋଡ଼ନ୍ତୁ</h2>
+      <form onsubmit="handleSaveOrUpdateSong(event)">
+        <div class="form-group">
+          <label>ଗୀତ ନମ୍ବର (Song No.):</label>
+          <input type="number" id="song-number-input" required placeholder="ଉଦାହରଣ: 4">
+        </div>
+        <div class="form-group">
+          <label>ଗୀତର ଶୀର୍ଷକ (Title):</label>
+          <input type="text" id="song-title-input" required placeholder="ଗୀତର ନାମ...">
+        </div>
+        <div class="form-group">
+          <label>YouTube Link (Optional):</label>
+          <input type="url" id="song-yt-input" placeholder="https://www.youtube.com/watch?v=...">
+        </div>
+        <div class="form-group">
+          <label>ଗୀତର ପଦ (Lyrics):</label>
+          <textarea id="song-lyrics-input" rows="8" required placeholder="ଗୀତର ପଦ ଏଠାରେ ଲେଖନ୍ତୁ..."></textarea>
+        </div>
+        <button type="submit" id="form-submit-btn" class="save-btn">ସାଇତି ରଖନ୍ତୁ (Save)</button>
+      </form>
+    </div>
+
+    <!-- 4. Batch Import View -->
+    <div id="bulk-view" class="screen">
+      <div class="reader-header">
+        <button class="nav-btn" onclick="showScreen('list-view')">← ବାତିଲ</button>
+      </div>
+      <h2 style="margin-top:0; color: var(--primary);">ଏକାଥରେ ଅନେକ ଗୀତ ଯୋଡ଼ନ୍ତୁ (Bulk Import)</h2>
+      
+      <div class="info-box">
+        <strong>ଫର୍ମାଟ୍ (Format):</strong><br>
+        #ନମ୍ବର<br>
+        ଗୀତର ନାମ<br>
+        YouTube Link (ଇଚ୍ଛାଧୀନ)<br>
+        ଗୀତର ସମ୍ପୂର୍ଣ୍ଣ ପଦ...<br>
+        <strong>---</strong> (ପ୍ରତି ଗୀତ ମଝିରେ ତିନୋଟି ଡ୍ୟାସ୍ ଦିଅନ୍ତୁ)
+      </div>
+
+      <div class="form-group">
+        <textarea id="bulk-text" rows="12" placeholder="#4
+ତୁମେ ମୋର ଆଶ୍ରୟ ସ୍ଥଳ
+https://youtube.com/...
+ତୁମେ ମୋର ଆଶ୍ରୟ ସ୍ଥଳ,
+ତୁମେ ମୋର ଦୁର୍ଗ ।
+---
+#5
+ଧନ୍ୟବାଦ ଦେବି ପ୍ରଭୁଙ୍କୁ
+ମୁଁ ସର୍ବଦା ଧନ୍ୟବାଦ ଦେବି..."></textarea>
+      </div>
+      <button class="save-btn" onclick="handleBulkImport()">ସମସ୍ତ ଗୀତ ଯୋଡ଼ନ୍ତୁ (Import All)</button>
+    </div>
+
+  </div>
+
+  <!-- 5. Alphabet Popup Modal -->
+  <div class="modal-overlay" id="alpha-modal" onclick="closeAlphaModalOnBg(event)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>ଅକ୍ଷର ଅନୁସାରେ ଗୀତ ଖୋଜନ୍ତୁ (ଅ to ହ)</h3>
+        <button class="close-modal-btn" onclick="closeAlphabetPopup()">✕</button>
+      </div>
+
+      <div class="alpha-grid" id="alpha-grid-container"></div>
+
+      <div class="alpha-results-box" id="alpha-results-list">
+        <p style="color: #888; text-align: center; margin: 12px 0;">ଉପରେ ଥିବା ଯେକୌଣସି ଅକ୍ଷର ଉପରେ କ୍ଲିକ୍ କରନ୍ତୁ...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Interactive Playlist Modal -->
+  <div class="modal-overlay" id="playlist-modal" onclick="closeModalOnBg(event)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>ତାଲିକାରେ ସାଇତନ୍ତୁ</h3>
+        <button class="close-modal-btn" onclick="closePlaylistModal()">✕</button>
+      </div>
+
+      <div class="playlist-checkbox-list" id="modal-checkbox-list"></div>
+
+      <div class="new-playlist-box">
+        <input type="text" id="modal-new-pl-input" placeholder="+ ନୂଆ ତାଲିକା ନାମ...">
+        <button type="button" onclick="createPlaylistFromModal()">ଗଢ଼ନ୍ତୁ</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const defaultSongs = [
+      {
+        number: 1,
+        title: "ପ୍ରଶଂସା କର ସର୍ବେ ଯୀଶୁ ନାମର",
+        youtube: "https://www.youtube.com/results?search_query=prasansa+kara+sarve+yisu+namara",
+        lyrics: `ପ୍ରଶଂସା କର ସର୍ବେ ଯୀଶୁ ନାମର,\nଦୂତଗଣ ପ୍ରଣାମ କର;\nରାଜ ମୁକୁଟ ଆଣି ତାଙ୍କ ମସ୍ତକେ ଦିଅ,\nତାହାଙ୍କୁ ସର୍ବେ ରାଜା ବୋଲି ମାନ ।`
+      },
+      {
+        number: 2,
+        title: "କେଡେ ପ୍ରେମ କଲେ ମୋତେ",
+        youtube: "https://www.youtube.com/results?search_query=kede+prema+kale+mote",
+        lyrics: `କେଡେ ପ୍ରେମ କଲେ ମୋତେ ପ୍ରଭୁ ଯୀଶୁ,\nମୋ ପାଇଁ ପ୍ରାଣ ଦେଲେ କ୍ରୁଶ ଉପରେ ।\nଧନ୍ୟ ତାଙ୍କର ପ୍ରେମ, ଧନ୍ୟ ତାଙ୍କର ଦୟା,\nଗାଇବି ମୁଁ ତାଙ୍କ ନାମ ଚିରଦିନ ।`
+      },
+      {
+        number: 3,
+        title: "ଆସ ସର୍ବେ ଆନନ୍ଦରେ",
+        youtube: "",
+        lyrics: `ଆସ ସର୍ବେ ଆନନ୍ଦରେ ଗାଇବା ଗୀତ,\nପ୍ରଭୁଙ୍କ ନାମେ କରିବା ଧନ୍ୟବାଦ ।\nସେ ହିଁ ଆମ୍ଭମାନଙ୍କ ରକ୍ଷାକର୍ତ୍ତା,\nତାଙ୍କ ଚରଣେ କରିବା ପ୍ରଣିପାତ ।`
+      }
+    ];
+
+    const odiaAlphabets = [
+      "ଅ", "ଆ", "ଇ", "ଈ", "ଉ", "ଊ", "ଋ", "ଏ", "ଐ", "ଓ", "ଔ",
+      "କ", "ଖ", "ଗ", "ଘ", "ଙ",
+      "ଚ", "ଛ", "ଜ", "ଝ", "ଞ",
+      "ଟ", "ଠ", "ଡ", "ଢ", "ଣ",
+      "ତ", "ଥ", "ଦ", "ଧ", "ନ",
+      "ପ", "ଫ", "ବ", "ଭ", "ମ",
+      "ଯ", "ର", "ଲ", "ଳ", "ଶ", "ଷ", "ସ", "ହ"
+    ];
+
+    let songs = defaultSongs;
+    let playlists = {
+      "ପ୍ରିୟ ଗୀତ (Favorites)": [1, 2],
+      "ରବିବାର ଆରାଧନା (Sunday Worship)": [2]
+    };
+    let isDarkMode = false;
+    let scrollTimer = null;
+    let isFullScreen = false;
+    let editingOriginalNumber = null;
+    let selectedLetterInModal = null;
+
+    let activePlaylist = "All";
+    let activeSong = null;
+    let currentFontSize = 18;
+    let searchMode = "title"; // 'title' (default) or 'lyrics'
+
+    // Gesture variables
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    let lastTapTime = 0;
+    let singleTapTimer = null;
+
+    try {
+      const storedSongs = localStorage.getItem("my_odia_songbook");
+      if (storedSongs) songs = JSON.parse(storedSongs);
+
+      const storedPlaylists = localStorage.getItem("my_odia_playlists");
+      if (storedPlaylists) {
+        const parsedPl = JSON.parse(storedPlaylists);
+        if (typeof parsedPl === "object" && !Array.isArray(parsedPl)) {
+          playlists = parsedPl;
+        }
+      }
+
+      isDarkMode = localStorage.getItem("my_odia_theme") === "dark";
+    } catch (e) {
+      console.warn("Storage warning:", e);
+    }
+
+    const songListEl = document.getElementById("song-list");
+    const searchBox = document.getElementById("search-box");
+    const playlistBarEl = document.getElementById("playlist-bar");
+    const songTitleEl = document.getElementById("song-title");
+    const songLyricsEl = document.getElementById("song-lyrics");
+    const ytBarEl = document.getElementById("yt-bar");
+    const ytLinkEl = document.getElementById("yt-link");
+    const playlistModal = document.getElementById("playlist-modal");
+    const modalCheckboxList = document.getElementById("modal-checkbox-list");
+    const modalNewPlInput = document.getElementById("modal-new-pl-input");
+    const themeBtn = document.getElementById("theme-btn");
+    const autoscrollBtn = document.getElementById("autoscroll-btn");
+    const lyricsViewEl = document.getElementById("lyrics-view");
+
+    const alphaModal = document.getElementById("alpha-modal");
+    const alphaGridContainer = document.getElementById("alpha-grid-container");
+    const alphaResultsList = document.getElementById("alpha-results-list");
+
+    const formHeading = document.getElementById("form-heading");
+    const formSubmitBtn = document.getElementById("form-submit-btn");
+    const songNumberInput = document.getElementById("song-number-input");
+    const songTitleInput = document.getElementById("song-title-input");
+    const songYtInput = document.getElementById("song-yt-input");
+    const songLyricsInput = document.getElementById("song-lyrics-input");
+    const bulkText = document.getElementById("bulk-text");
+
+    const modeTitleBtn = document.getElementById("mode-title-btn");
+    const modeLyricsBtn = document.getElementById("mode-lyrics-btn");
+
+    function applyTheme() {
+      if (isDarkMode) {
+        document.body.classList.add("dark-theme");
+        themeBtn.innerText = "☀️ ଦିନ";
+      } else {
+        document.body.classList.remove("dark-theme");
+        themeBtn.innerText = "🌙 ରାତ୍ରି";
+      }
+    }
+
+    function toggleDarkMode() {
+      isDarkMode = !isDarkMode;
+      localStorage.setItem("my_odia_theme", isDarkMode ? "dark" : "light");
+      applyTheme();
+    }
+
+    /* Switch between Title and Lyrics Keyword Search Mode */
+    function setSearchMode(mode) {
+      searchMode = mode;
+      if (mode === "title") {
+        modeTitleBtn.classList.add("active");
+        modeLyricsBtn.classList.remove("active");
+        searchBox.placeholder = "ଗୀତ ନମ୍ବର କିମ୍ବା ନାମ ଖୋଜନ୍ତୁ...";
+      } else {
+        modeLyricsBtn.classList.add("active");
+        modeTitleBtn.classList.remove("active");
+        searchBox.placeholder = "ଗୀତ ଭିତରର ଯେକୌଣସି ଶବ୍ଦ/ପଦ ଲେଖନ୍ତୁ...";
+      }
+      applyFilters();
+    }
+
+    function toggleFullScreenMode() {
+      isFullScreen = !isFullScreen;
+      if (isFullScreen) {
+        document.body.classList.add("is-fullscreen");
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        }
+      } else {
+        document.body.classList.remove("is-fullscreen");
+        if (document.exitFullscreen && document.fullscreenElement) {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+    }
+
+    /* Gestures on Lyrics: Swipe Left or Tap */
+    lyricsViewEl.addEventListener("touchstart", function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    lyricsViewEl.addEventListener("touchend", function(e) {
+      if (e.target.closest("button") || e.target.closest("a") || e.target.closest(".modal-overlay")) return;
+      
+      touchEndX = e.changedTouches[0].screenX;
+      touchEndY = e.changedTouches[0].screenY;
+
+      const diffX = touchStartX - touchEndX;
+      const diffY = Math.abs(touchStartY - touchEndY);
+
+      if (diffX > 50 && diffY < 40) {
+        openAlphabetPopup();
+        return;
+      }
+
+      if (Math.abs(diffX) < 15 && diffY < 15) {
+        const now = new Date().getTime();
+        const tapGap = now - lastTapTime;
+
+        if (tapGap > 0 && tapGap < 300) {
+          if (singleTapTimer) clearTimeout(singleTapTimer);
+          toggleFullScreenMode();
+        } else {
+          singleTapTimer = setTimeout(() => {
+            openAlphabetPopup();
+          }, 300);
+        }
+        lastTapTime = now;
+      }
+    });
+
+    lyricsViewEl.addEventListener("click", function(e) {
+      if (e.pointerType === "mouse") {
+        if (e.target.closest("button") || e.target.closest("a") || e.target.closest(".modal-overlay")) return;
+        openAlphabetPopup();
+      }
+    });
+
+    function toggleAutoScroll() {
+      if (scrollTimer) {
+        clearInterval(scrollTimer);
+        scrollTimer = null;
+        autoscrollBtn.innerText = "▶ ସ୍କ୍ରୋଲ୍";
+        autoscrollBtn.classList.remove("scrolling");
+      } else {
+        autoscrollBtn.innerText = "⏸ ବନ୍ଦ";
+        autoscrollBtn.classList.add("scrolling");
+        scrollTimer = setInterval(() => {
+          window.scrollBy({ top: 1, behavior: 'smooth' });
+          if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 10) {
+            clearInterval(scrollTimer);
+            scrollTimer = null;
+            autoscrollBtn.innerText = "▶ ସ୍କ୍ରୋଲ୍";
+            autoscrollBtn.classList.remove("scrolling");
+          }
+        }, 50);
+      }
+    }
+
+    function exitLyricsView() {
+      if (isFullScreen) toggleFullScreenMode();
+      if (scrollTimer) {
+        clearInterval(scrollTimer);
+        scrollTimer = null;
+        autoscrollBtn.innerText = "▶ ସ୍କ୍ରୋଲ୍";
+        autoscrollBtn.classList.remove("scrolling");
+      }
+      showScreen('list-view');
+    }
+
+    function shareCurrentSong() {
+      if (!activeSong) return;
+
+      let shareText = `🎵 ଗୀତ ନମ୍ବର: #${activeSong.number}\n📖 ${activeSong.title}\n\n${activeSong.lyrics}`;
+      if (activeSong.youtube && activeSong.youtube.trim() !== "") {
+        shareText += `\n\n▶ YouTube: ${activeSong.youtube}`;
+      }
+
+      if (navigator.share) {
+        navigator.share({ title: activeSong.title, text: shareText }).catch(() => {});
+      } else {
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+        window.open(whatsappUrl, "_blank");
+      }
+    }
+
+    function persistAll() {
+      try {
+        localStorage.setItem("my_odia_songbook", JSON.stringify(songs));
+        localStorage.setItem("my_odia_playlists", JSON.stringify(playlists));
+      } catch (err) {
+        console.error("Storage save failed:", err);
+      }
+    }
+
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(el => el.classList.remove('active-screen'));
+      document.getElementById(screenId).classList.add('active-screen');
+      window.scrollTo(0, 0);
+    }
+
+    function renderPlaylistChips() {
+      playlistBarEl.innerHTML = "";
+
+      const allChip = document.createElement("button");
+      allChip.className = `playlist-chip ${activePlaylist === 'All' ? 'active' : ''}`;
+      allChip.innerText = "ସମସ୍ତ (All)";
+      allChip.onclick = () => { activePlaylist = "All"; renderPlaylistChips(); applyFilters(); };
+      playlistBarEl.appendChild(allChip);
+
+      for (const plName in playlists) {
+        const chip = document.createElement("button");
+        chip.className = `playlist-chip ${activePlaylist === plName ? 'active' : ''}`;
+        chip.innerText = `📁 ${plName} (${playlists[plName].length})`;
+        chip.onclick = () => { activePlaylist = plName; renderPlaylistChips(); applyFilters(); };
+        playlistBarEl.appendChild(chip);
+      }
+    }
+
+    function openAlphabetPopup() {
+      renderAlphabetGrid();
+      alphaModal.style.display = "flex";
+    }
+
+    function closeAlphabetPopup() {
+      alphaModal.style.display = "none";
+      selectedLetterInModal = null;
+    }
+
+    function closeAlphaModalOnBg(e) {
+      if (e.target === alphaModal) closeAlphabetPopup();
+    }
+
+    function renderAlphabetGrid() {
+      alphaGridContainer.innerHTML = "";
+      odiaAlphabets.forEach(char => {
+        const btn = document.createElement("button");
+        btn.className = `alpha-grid-btn ${selectedLetterInModal === char ? 'active' : ''}`;
+        btn.innerText = char;
+        btn.onclick = () => pickLetterInModal(char);
+        alphaGridContainer.appendChild(btn);
+      });
+    }
+
+    function pickLetterInModal(char) {
+      selectedLetterInModal = char;
+      renderAlphabetGrid();
+
+      const matchedSongs = songs.filter(s => s.title.trim().startsWith(char));
+      matchedSongs.sort((a, b) => a.number - b.number);
+
+      alphaResultsList.innerHTML = "";
+      if (matchedSongs.length === 0) {
+        alphaResultsList.innerHTML = `<p style="color: #888; text-align: center; margin: 16px 0;">"${char}" ଅକ୍ଷରରେ କୌଣସି ଗୀତ ମିଳିଲା ନାହିଁ।</p>`;
+        return;
+      }
+
+      matchedSongs.forEach(song => {
+        const row = document.createElement("div");
+        row.className = "alpha-song-pick";
+        row.innerHTML = `<strong style="color:var(--primary); min-width:36px;">#${song.number}</strong> <span>${song.title}</span>`;
+        row.onclick = () => {
+          closeAlphabetPopup();
+          openSong(song);
+        };
+        alphaResultsList.appendChild(row);
+      });
+    }
+
+    /* Core Filter & Search Logic with Keyword Matching */
+    function applyFilters() {
+      const term = searchBox.value.trim().toLowerCase();
+      let list = songs;
+
+      if (activePlaylist !== "All") {
+        const allowed = playlists[activePlaylist] || [];
+        list = list.filter(s => allowed.includes(s.number));
+      }
+
+      let results = [];
+
+      if (!term) {
+        results = list.map(song => ({ song: song, matchedSnippet: null }));
+      } else if (searchMode === "title") {
+        // Mode 1: Search by song number or title
+        results = list
+          .filter(song => song.title.toLowerCase().includes(term) || song.number.toString().includes(term))
+          .map(song => ({ song: song, matchedSnippet: null }));
+      } else {
+        // Mode 2: Search by ANY lyrics keywords / forgotten lines
+        list.forEach(song => {
+          const lines = song.lyrics.split("\n");
+          let matchedLine = null;
+
+          for (let i = 0; i < lines.length; i++) {
+            if (lines[i].toLowerCase().includes(term)) {
+              matchedLine = lines[i].trim();
+              break;
+            }
+          }
+
+          if (matchedLine || song.title.toLowerCase().includes(term)) {
+            results.push({
+              song: song,
+              matchedSnippet: matchedLine,
+              searchTerm: term
+            });
+          }
+        });
+      }
+
+      renderSongs(results);
+    }
+
+    /* Render Results with Snippet Preview */
+    function renderSongs(resultsArray) {
+      songListEl.innerHTML = "";
+      if (resultsArray.length === 0) {
+        songListEl.innerHTML = "<p style='color: #888; text-align: center; margin-top: 30px;'>କୌଣସି ଗୀତ ମିଳିଲା ନାହିଁ</p>";
+        return;
+      }
+
+      resultsArray.sort((a, b) => a.song.number - b.song.number);
+
+      resultsArray.forEach(item => {
+        const song = item.song;
+        const div = document.createElement("div");
+        div.className = "song-item";
+
+        let snippetHtml = "";
+        if (item.matchedSnippet) {
+          // Highlight the searched keyword inside the line
+          const regex = new RegExp(`(${item.searchTerm})`, 'gi');
+          const highlightedLine = item.matchedSnippet.replace(regex, `<span class="keyword-highlight">$1</span>`);
+          snippetHtml = `<div class="keyword-snippet">🔍 "...${highlightedLine}..."</div>`;
+        }
+
+        div.innerHTML = `
+          <div class="song-main-row">
+            <div class="song-info">
+              <span class="song-number">#${song.number}</span>
+              <span class="song-title-text">${song.title}</span>
+              ${song.youtube ? '<span class="yt-badge">▶</span>' : ''}
+            </div>
+          </div>
+          ${snippetHtml}
+        `;
+        div.onclick = () => openSong(song);
+        songListEl.appendChild(div);
+      });
+    }
+
+    function openSong(song) {
+      activeSong = song;
+      songTitleEl.innerText = `#${song.number} - ${song.title}`;
+      songLyricsEl.innerText = song.lyrics;
+      songLyricsEl.style.fontSize = currentFontSize + "px";
+
+      if (song.youtube && song.youtube.trim() !== "") {
+        ytLinkEl.href = song.youtube;
+        ytBarEl.style.display = "block";
+      } else {
+        ytBarEl.style.display = "none";
+      }
+
+      showScreen('lyrics-view');
+    }
+
+    function changeFontSize(step) {
+      currentFontSize = Math.min(Math.max(currentFontSize + step, 14), 32);
+      songLyricsEl.style.fontSize = currentFontSize + "px";
+    }
+
+    function handleDeleteSong() {
+      if (!activeSong) return;
+      if (confirm(`"${activeSong.title}" ଗୀତକୁ ଡିଲିଟ୍ କରିବାକୁ ଚାହାଁନ୍ତି କି?`)) {
+        songs = songs.filter(s => s.number !== activeSong.number);
+        for (const pl in playlists) {
+          playlists[pl] = playlists[pl].filter(num => num !== activeSong.number);
+        }
+        persistAll();
+        renderPlaylistChips();
+        applyFilters();
+        exitLyricsView();
+      }
+    }
+
+    function openAddForm() {
+      editingOriginalNumber = null;
+      formHeading.innerText = "ନୂଆ ଗୀତ ଯୋଡ଼ନ୍ତୁ";
+      formSubmitBtn.innerText = "ସାଇତି ରଖନ୍ତୁ (Save)";
+      songNumberInput.value = "";
+      songTitleInput.value = "";
+      songYtInput.value = "";
+      songLyricsInput.value = "";
+      showScreen('form-view');
+    }
+
+    function openEditForm() {
+      if (!activeSong) return;
+      editingOriginalNumber = activeSong.number;
+      formHeading.innerText = "ଗୀତ ସମ୍ପାଦନା (Edit Song)";
+      formSubmitBtn.innerText = "ପରିବର୍ତ୍ତନ ସାଇତନ୍ତୁ (Update)";
+
+      songNumberInput.value = activeSong.number;
+      songTitleInput.value = activeSong.title;
+      songYtInput.value = activeSong.youtube || "";
+      songLyricsInput.value = activeSong.lyrics;
+
+      showScreen('form-view');
+    }
+
+    function cancelFormView() {
+      if (editingOriginalNumber !== null) {
+        showScreen('lyrics-view');
+      } else {
+        showScreen('list-view');
+      }
+    }
+
+    function handleSaveOrUpdateSong(e) {
+      e.preventDefault();
+      const num = parseInt(songNumberInput.value);
+      const title = songTitleInput.value.trim();
+      const yt = songYtInput.value.trim();
+      const lyrics = songLyricsInput.value.trim();
+
+      if (editingOriginalNumber !== null) {
+        if (num !== editingOriginalNumber && songs.some(s => s.number === num)) {
+          alert("ଏହି ନମ୍ବରରେ ଆଗରୁ ଗୋଟିଏ ଗୀତ ଅଛି!");
+          return;
+        }
+
+        const songIndex = songs.findIndex(s => s.number === editingOriginalNumber);
+        if (songIndex !== -1) {
+          songs[songIndex] = { number: num, title: title, youtube: yt, lyrics: lyrics };
+
+          if (num !== editingOriginalNumber) {
+            for (const pl in playlists) {
+              playlists[pl] = playlists[pl].map(n => n === editingOriginalNumber ? num : n);
+            }
+          }
+
+          persistAll();
+          renderPlaylistChips();
+          applyFilters();
+          openSong(songs[songIndex]);
+        }
+      } else {
+        if (songs.some(s => s.number === num)) {
+          alert("ଏହି ନମ୍ବରରେ ଆଗରୁ ଗୋଟିଏ ଗୀତ ଅଛି!");
+          return;
+        }
+
+        const newSong = { number: num, title: title, youtube: yt, lyrics: lyrics };
+        songs.push(newSong);
+        persistAll();
+
+        renderPlaylistChips();
+        applyFilters();
+        openSong(newSong);
+      }
+    }
+
+    function handleBulkImport() {
+      const rawText = bulkText.value.trim();
+      if (!rawText) return;
+
+      const rawBlocks = rawText.split(/\n\s*---\s*\n/);
+      let addedCount = 0;
+      let nextAutoNum = songs.length > 0 ? Math.max(...songs.map(s => s.number)) + 1 : 1;
+
+      rawBlocks.forEach(block => {
+        const lines = block.trim().split("\n").map(l => l.trim()).filter(l => l.length > 0);
+        if (lines.length < 2) return;
+
+        let num = null;
+        let titleIndex = 0;
+
+        if (lines[0].startsWith("#")) {
+          const parsedNum = parseInt(lines[0].replace("#", "").trim());
+          if (!isNaN(parsedNum)) {
+            num = parsedNum;
+            titleIndex = 1;
+          }
+        }
+
+        if (num === null) {
+          num = nextAutoNum++;
+        }
+
+        const title = lines[titleIndex] || `ଗୀତ #${num}`;
+        let yt = "";
+        let lyricsStartIndex = titleIndex + 1;
+
+        if (lines[lyricsStartIndex] && (lines[lyricsStartIndex].startsWith("http://") || lines[lyricsStartIndex].startsWith("https://"))) {
+          yt = lines[lyricsStartIndex];
+          lyricsStartIndex++;
+        }
+
+        const lyrics = lines.slice(lyricsStartIndex).join("\n");
+
+        const existingIdx = songs.findIndex(s => s.number === num);
+        if (existingIdx !== -1) {
+          songs[existingIdx] = { number: num, title: title, youtube: yt, lyrics: lyrics };
+        } else {
+          songs.push({ number: num, title: title, youtube: yt, lyrics: lyrics });
+        }
+        addedCount++;
+      });
+
+      if (addedCount > 0) {
+        persistAll();
+        renderPlaylistChips();
+        applyFilters();
+        bulkText.value = "";
+        alert(`${addedCount} ଟି ଗୀତ ସଫଳତାର ସହ ଯୋଡ଼ାଗଲା! (${addedCount} songs imported!)`);
+        showScreen('list-view');
+      } else {
+        alert("କୌଣସି ଗୀତ ପଢ଼ିହେଲା ନାହିଁ। ଦୟାକରି ଫର୍ମାଟ୍ ଯାଞ୍ଚ କରନ୍ତୁ।");
+      }
+    }
+
+    function openPlaylistModal() {
+      if (!activeSong) return;
+      renderModalPlaylists();
+      playlistModal.style.display = "flex";
+    }
+
+    function closePlaylistModal() {
+      playlistModal.style.display = "none";
+      modalNewPlInput.value = "";
+      renderPlaylistChips();
+      applyFilters();
+    }
+
+    function closeModalOnBg(e) {
+      if (e.target === playlistModal) closePlaylistModal();
+    }
+
+    function renderModalPlaylists() {
+      modalCheckboxList.innerHTML = "";
+      const plNames = Object.keys(playlists);
+
+      if (plNames.length === 0) {
+        modalCheckboxList.innerHTML = "<p style='color: #888; font-size: 0.95rem;'>କୌଣସି ତାଲିକା ନାହିଁ। ତଳେ ନୂଆ ତାଲିକା ଗଢ଼ନ୍ତୁ।</p>";
+        return;
+      }
+
+      plNames.forEach(plName => {
+        const isChecked = playlists[plName].includes(activeSong.number);
+        const label = document.createElement("label");
+        label.className = "playlist-option";
+        label.innerHTML = `
+          <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSongInList('${plName}', this.checked)">
+          <span>${plName}</span>
+        `;
+        modalCheckboxList.appendChild(label);
+      });
+    }
+
+    function toggleSongInList(plName, add) {
+      if (!activeSong) return;
+      if (add) {
+        if (!playlists[plName].includes(activeSong.number)) {
+          playlists[plName].push(activeSong.number);
+        }
+      } else {
+        playlists[plName] = playlists[plName].filter(num => num !== activeSong.number);
+      }
+      persistAll();
+    }
+
+    function createPlaylistFromModal() {
+      const name = modalNewPlInput.value.trim();
+      if (!name) return;
+
+      if (!playlists[name]) {
+        playlists[name] = [activeSong.number];
+        persistAll();
+        modalNewPlInput.value = "";
+        renderModalPlaylists();
+      } else {
+        alert("ଏହି ନାମରେ ଆଗରୁ ଏକ ତାଲିକା ଅଛି!");
+      }
+    }
+
+    function exportData() {
+      const backupObj = {
+        version: 1,
+        exportDate: new Date().toISOString(),
+        songs: songs,
+        playlists: playlists
+      };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
+      const downloadAnchor = document.createElement("a");
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `odia_songbook_backup.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed.songs && Array.isArray(parsed.songs)) {
+            if (confirm("ସମସ୍ତ ଗୀତ ରିଷ୍ଟୋର୍ କରିବାକୁ ଚାହାଁନ୍ତି କି?")) {
+              songs = parsed.songs;
+              if (parsed.playlists) playlists = parsed.playlists;
+              persistAll();
+              renderPlaylistChips();
+              applyFilters();
+              alert("ବ୍ୟାକ୍-ଅପ୍ ସଫଳତାର ସହ ରିଷ୍ଟୋର୍ ହେଲା!");
+            }
+          } else {
+            alert("ଭୁଲ ଫାଇଲ ଫର୍ମାଟ୍!");
+          }
+        } catch (err) {
+          alert("ଫାଇଲ ପଢ଼ିବାରେ ତ୍ରୁଟି ହେଲା।");
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    }
+
+    searchBox.addEventListener("input", applyFilters);
+
+    applyTheme();
+    renderPlaylistChips();
+    applyFilters();
+  </script>
+</body>
+</html>
